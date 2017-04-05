@@ -19,6 +19,10 @@ public class User {
     @Lob
     private List<Pair> pairs;
 
+    // needed for rest calls
+    public User(){
+    }
+
     public User(String username, String password) {
         this.username = username;
         this.password = password;
