@@ -57,5 +57,12 @@ public class User {
         return null;
     }
 
+    public List<Pair> getPairs(){
+        return pairs;
+    }
+
+    public void removePair(Pair pair){
+        pairs.remove(pair);
+    }
 
 }

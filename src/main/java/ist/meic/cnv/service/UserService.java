@@ -1,9 +1,12 @@
 package ist.meic.cnv.service;
 
+import ist.meic.cnv.domain.Pair;
 import ist.meic.cnv.domain.User;
 import ist.meic.cnv.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by Diogo on 05/04/2017.
@@ -36,5 +39,20 @@ public class UserService {
 
     public String logout(String token) {
         return tokenService.removeToken(token);
+    }
+
+    public List<Pair> list(String token) {
+        User user = userRepository.findUserByUsername(tokenService.getUsername(token));
+        if(user != null)
+            return user.getPairs();
+        return null;
+    }
+
+    public void addPair(String token, Pair pair) {
+        userRepository.findUserByUsername(tokenService.getUsername(token)).addPair(pair);
+    }
+
+    public void removePair(String token, Pair pair) {
+        userRepository.findUserByUsername(tokenService.getUsername(token)).removePair(pair);
     }
 }

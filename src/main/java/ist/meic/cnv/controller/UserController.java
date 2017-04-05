@@ -1,16 +1,15 @@
 package ist.meic.cnv.controller;
 
+import ist.meic.cnv.domain.Pair;
 import ist.meic.cnv.domain.User;
 import ist.meic.cnv.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Diogo on 05/04/2017.
@@ -57,6 +56,36 @@ public class UserController extends LocmessController{
                         buildResponseBody(""),
                         HttpStatus.OK);
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "user/{token}/list")
+    public List<Pair> list(@PathVariable String token) {
+        return userService.list(token);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "user/{token}/addpair")
+    public ResponseEntity addPair(@PathVariable String token, @RequestBody Pair pair) {
+        try{
+            userService.addPair(token, pair);
+            return new ResponseEntity<>(buildResponseBody(""), HttpStatus.OK);
+        }
+        catch (NullPointerException e){
+            return new ResponseEntity<>(buildResponseBody("Invalid token!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "user/{token}/removepair")
+    public ResponseEntity removePair(@PathVariable String token, @RequestBody Pair pair) {
+        try{
+            userService.removePair(token, pair);
+            return new ResponseEntity<>(buildResponseBody(""), HttpStatus.OK);
+        }
+        catch (NullPointerException e){
+            return new ResponseEntity<>(buildResponseBody("Invalid token!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+
 
 
 }

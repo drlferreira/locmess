@@ -43,4 +43,8 @@ public class TokenService {
         return tokens.remove(token);
     }
 
+    public String getUsername(String token){
+        return tokens.get(token);
+    }
+
 }
