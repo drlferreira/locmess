@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -29,7 +30,7 @@ public class TokenService {
             token = JWT.create()
                     .withSubject(username)
                     .withIssuer("locmess")
-                    .sign(Algorithm.HMAC512("portugal"));
+                    .sign(Algorithm.HMAC512(UUID.randomUUID().toString()));
         } catch (Exception e) {
             e.printStackTrace();
         }

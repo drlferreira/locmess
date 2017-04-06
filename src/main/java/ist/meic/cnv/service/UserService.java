@@ -42,17 +42,18 @@ public class UserService {
     }
 
     public List<Pair> list(String token) {
-        User user = userRepository.findUserByUsername(tokenService.getUsername(token));
-        if(user != null)
-            return user.getPairs();
-        return null;
+        return userRepository.findUserByUsername(tokenService.getUsername(token)).getPairs();
     }
 
     public void addPair(String token, Pair pair) {
-        userRepository.findUserByUsername(tokenService.getUsername(token)).addPair(pair);
+        User user = userRepository.findUserByUsername(tokenService.getUsername(token));
+        user.getPairs().add(pair);
+        userRepository.saveAndFlush(user);
     }
 
     public void removePair(String token, Pair pair) {
-        userRepository.findUserByUsername(tokenService.getUsername(token)).removePair(pair);
+        User user = userRepository.findUserByUsername(tokenService.getUsername(token));
+        user.getPairs().remove(pair);
+        userRepository.saveAndFlush(user);
     }
 }

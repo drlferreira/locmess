@@ -7,6 +7,8 @@ import java.util.List;
  */
 public abstract class LocmessController {
 
+    protected final String TOKEN_HEADER = "X-Token";
+
     protected String buildResponseBody(String message){
         return "{\"message\":" + " \"" + message + "\"}";
     }

@@ -24,7 +24,7 @@
 				<role>Integrator</role>
 			</roles>
 			<properties>
-				<picUrl>https://fenix.tecnico.ulisboa.pt/user/photo/ist179018?s=100</picUrl>
+				<picUrl>https://fenix.tecnico.ulisboa.pt/username/photo/ist179018?s=100</picUrl>
 			</properties>
 		</developer>
 	</developers>
@@ -60,6 +60,12 @@
 			<artifactId>java-jwt</artifactId>
 			<version>3.1.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>

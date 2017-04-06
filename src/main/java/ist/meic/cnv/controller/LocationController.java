@@ -1,36 +1,37 @@
 package ist.meic.cnv.controller;
 
+import ist.meic.cnv.domain.GPSLocation;
 import ist.meic.cnv.domain.Location;
-import ist.meic.cnv.domain.Pair;
 import ist.meic.cnv.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
  * Created by Diogo on 05/04/2017.
  */
-
 @RestController
-public class LocationController {
+@RequestMapping(value = "location")
+public class LocationController extends LocmessController {
 
     @Autowired
     LocationService locationService;
 
-    @RequestMapping(method = RequestMethod.GET, value = "location/{token}/list")
+    @RequestMapping(method = RequestMethod.GET, value = "/list")
     public List<Location> listLocations(@PathVariable String token) {
         return locationService.listLocations(token);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "location/{token}/create")
-    public void createLocation(@PathVariable String token, @RequestBody Location location) {
-        locationService.createLocation(token, location);
+    @RequestMapping(method = RequestMethod.POST, value = "/create")
+    public void createLocation(HttpServletRequest httpServletRequest, @RequestBody Location location) {
+        locationService.createLocation(httpServletRequest.getHeader(TOKEN_HEADER), location);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "location/{token}/remove")
-    public void removeLocation(@PathVariable String token, @RequestBody Location location) {
-        locationService.removeLocation(token, location);
+    @RequestMapping(method = RequestMethod.POST, value = "/remove")
+    public void removeLocation(HttpServletRequest httpServletRequest, @RequestBody Location location) {
+        locationService.removeLocation(httpServletRequest.getHeader(TOKEN_HEADER), location);
     }
 
 }

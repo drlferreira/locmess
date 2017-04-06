@@ -1,8 +1,9 @@
 package ist.meic.cnv.domain;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,8 @@ public class User {
     @Id
     private String username;
     private String password;
-    @Lob
+    @ElementCollection
+    @CollectionTable(name="listOfUsers")
     private List<Pair> pairs;
 
     // needed for rest calls
@@ -45,10 +47,6 @@ public class User {
         this.password = password;
     }
 
-    public void addPair(Pair pair){
-        pairs.add(pair);
-    }
-
     public String getValue(String key){
         for (Pair pair : pairs){
             if (pair.getKey().equals(key))
@@ -59,10 +57,6 @@ public class User {
 
     public List<Pair> getPairs(){
         return pairs;
-    }
-
-    public void removePair(Pair pair){
-        pairs.remove(pair);
     }
 
 }

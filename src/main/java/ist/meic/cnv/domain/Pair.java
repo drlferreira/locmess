@@ -1,9 +1,11 @@
 package ist.meic.cnv.domain;
 
+import java.io.Serializable;
+
 /**
  * Created by Diogo on 05/04/2017.
  */
-public class Pair {
+public class Pair implements Serializable {
 
     private String key;
     private String value;
@@ -30,5 +32,14 @@ public class Pair {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(o != null && o instanceof Pair){
+            Pair toCompare = (Pair) o;
+            return this.getKey().equals(toCompare.getKey()) && this.getValue().equals(toCompare.getValue());
+        }
+        return false;
     }
 }

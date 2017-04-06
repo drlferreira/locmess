@@ -1,8 +1,12 @@
 package ist.meic.cnv.domain;
 
+import javax.persistence.Entity;
+import java.io.Serializable;
+
 /**
  * Created by Diogo on 05/04/2017.
  */
+@Entity
 public class GPSLocation extends Location {
 
     private double latitude;

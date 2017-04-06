@@ -29,19 +29,16 @@ public class LocationService {
     }
 
     public List<Location> listLocations(String token) {
-        return tokenService.getUsername(token) != null ? locations : null;
+        return locations;
     }
 
     public void createLocation(String token, Location location) {
-        if(tokenService.getUsername(token) != null){
-            locationRepository.saveAndFlush(location);
-        }
+        locations.add(location);
+        locationRepository.saveAndFlush(location);
     }
 
     public void removeLocation(String token, Location location) {
-        if(tokenService.getUsername(token) != null){
-            locations.remove(location);
-            locationRepository.delete(location);
-        }
+        locations.remove(location);
+        locationRepository.delete(location);
     }
 }
