@@ -30,17 +30,22 @@ public class TrackerService {
     UserService userService;
 
     private ConcurrentHashMap<User, Location> clientsLocations;
+    private ConcurrentHashMap<User, Timer> timers;
 
     @PostConstruct
     public void init(){
         clientsLocations = new ConcurrentHashMap<>();
+        timers = new ConcurrentHashMap<>();
     }
 
     public void track(String token, Location currentLocation) {
         User user = userRepository.findUserByUsername(tokenService.getUsername(token));
         clientsLocations.put(user, currentLocation);
+        // stop the old timer
+        timers.get(user).cancel();
         // TODO: Return the list of messages!
-        missedHeartBeat(user, token, HEARTBEAT_DELAY);
+        // start a new one
+        timers.put(user, missedHeartBeat(user, token, HEARTBEAT_DELAY));
     }
 
     // when a user logsout there is no need to track its location anymore
@@ -56,14 +61,16 @@ public class TrackerService {
             clientsLocations.remove(toRemove);
     }
 
-    private void missedHeartBeat(User user, String token, long delay){
-        new Timer().schedule(new TimerTask() {
+    private Timer missedHeartBeat(User user, String token, long delay){
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 userService.logout(token);
                 clientsLocations.remove(user);
             }
         }, delay);
+        return timer;
     }
 
 }
