@@ -4,6 +4,7 @@ import ist.meic.cmu.domain.Location;
 import ist.meic.cmu.domain.User;
 import ist.meic.cmu.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Timer;
@@ -13,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Diogo on 08/04/2017.
  */
+@Service
 public class TrackerService {
 
     // tolerated delay for the next hearbeat 30 seconds

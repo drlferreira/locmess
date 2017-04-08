@@ -19,8 +19,8 @@ public class LocationController extends LocmessController {
     LocationService locationService;
 
     @RequestMapping(method = RequestMethod.GET, value = "/list")
-    public List<Location> listLocations(@PathVariable String token) {
-        return locationService.listLocations(token);
+    public List<Location> listLocations(HttpServletRequest httpServletRequest) {
+        return locationService.listLocations(httpServletRequest.getHeader(TOKEN_HEADER));
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/create")
