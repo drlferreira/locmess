@@ -1,8 +1,7 @@
-package ist.meic.cnv.controller;
+package ist.meic.cmu.controller;
 
-import ist.meic.cnv.domain.GPSLocation;
-import ist.meic.cnv.domain.Location;
-import ist.meic.cnv.service.LocationService;
+import ist.meic.cmu.domain.Location;
+import ist.meic.cmu.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

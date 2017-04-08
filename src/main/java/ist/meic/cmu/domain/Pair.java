@@ -1,4 +1,4 @@
-package ist.meic.cnv.domain;
+package ist.meic.cmu.domain;
 
 import java.io.Serializable;
 

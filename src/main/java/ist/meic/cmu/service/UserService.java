@@ -1,8 +1,8 @@
-package ist.meic.cnv.service;
+package ist.meic.cmu.service;
 
-import ist.meic.cnv.domain.Pair;
-import ist.meic.cnv.domain.User;
-import ist.meic.cnv.repository.UserRepository;
+import ist.meic.cmu.domain.Pair;
+import ist.meic.cmu.domain.User;
+import ist.meic.cmu.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

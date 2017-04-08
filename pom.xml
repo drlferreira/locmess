@@ -79,7 +79,7 @@
 							<goal>repackage</goal>
 						</goals>
 						<configuration>
-							<mainClass>ist.meic.cnv.LocMessApplication</mainClass>
+							<mainClass>ist.meic.cmu.LocMessApplication</mainClass>
 						</configuration>
 					</execution>
 				</executions>

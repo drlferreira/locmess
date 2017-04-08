@@ -1,4 +1,4 @@
-package ist.meic.cnv.controller;
+package ist.meic.cmu.controller;
 
 import java.util.List;
 

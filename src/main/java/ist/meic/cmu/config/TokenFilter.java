@@ -1,6 +1,6 @@
-package ist.meic.cnv.config;
+package ist.meic.cmu.config;
 
-import ist.meic.cnv.service.TokenService;
+import ist.meic.cmu.service.TokenService;
 import org.apache.catalina.servlet4preview.GenericFilter;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;

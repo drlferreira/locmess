@@ -1,6 +1,6 @@
-package ist.meic.cnv.repository;
+package ist.meic.cmu.repository;
 
-import ist.meic.cnv.domain.Location;
+import ist.meic.cmu.domain.Location;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

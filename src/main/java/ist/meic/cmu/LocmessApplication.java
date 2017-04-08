@@ -1,6 +1,6 @@
-package ist.meic.cnv;
+package ist.meic.cmu;
 
-import ist.meic.cnv.config.TokenFilter;
+import ist.meic.cmu.config.TokenFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

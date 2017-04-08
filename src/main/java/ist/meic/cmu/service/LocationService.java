@@ -1,7 +1,7 @@
-package ist.meic.cnv.service;
+package ist.meic.cmu.service;
 
-import ist.meic.cnv.domain.Location;
-import ist.meic.cnv.repository.LocationRepository;
+import ist.meic.cmu.domain.Location;
+import ist.meic.cmu.repository.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
-package ist.meic.cnv.repository;
+package ist.meic.cmu.repository;
 
-import ist.meic.cnv.domain.User;
+import ist.meic.cmu.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

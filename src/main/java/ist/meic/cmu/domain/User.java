@@ -1,4 +1,4 @@
-package ist.meic.cnv.domain;
+package ist.meic.cmu.domain;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
@@ -18,7 +18,7 @@ public class User {
     private String username;
     private String password;
     @ElementCollection
-    @CollectionTable(name="listOfUsers")
+    @CollectionTable(name="profile")
     private List<Pair> pairs;
 
     // needed for rest calls

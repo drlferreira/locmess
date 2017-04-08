@@ -1,8 +1,8 @@
-package ist.meic.cnv.controller;
+package ist.meic.cmu.controller;
 
-import ist.meic.cnv.domain.Pair;
-import ist.meic.cnv.domain.User;
-import ist.meic.cnv.service.UserService;
+import ist.meic.cmu.domain.Pair;
+import ist.meic.cmu.domain.User;
+import ist.meic.cmu.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

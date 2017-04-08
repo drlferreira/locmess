@@ -1,7 +1,6 @@
-package ist.meic.cnv.domain;
+package ist.meic.cmu.domain;
 
 import javax.persistence.Entity;
-import java.io.Serializable;
 
 /**
  * Created by Diogo on 05/04/2017.
