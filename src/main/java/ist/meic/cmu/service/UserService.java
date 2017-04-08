@@ -20,6 +20,9 @@ public class UserService {
     @Autowired
     TokenService tokenService;
 
+    @Autowired
+    TrackerService trackerService;
+
     public User signUp(User user) {
         User toRegister = userRepository.findUserByUsername(user.getUsername());
         // there is no user with that username
@@ -38,10 +41,12 @@ public class UserService {
     }
 
     public String logout(String token) {
+        trackerService.remove(token);
         return tokenService.removeToken(token);
     }
 
     public List<Pair> list(String token) {
+        // TODO: 2.1.2 SECTION LOGIC
         return userRepository.findUserByUsername(tokenService.getUsername(token)).getPairs();
     }
 
