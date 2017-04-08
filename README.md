@@ -1,8 +1,8 @@
-#locmess# 
+# locmess
 
-##Endpoints 
+## Endpoints 
 
-###/locmess/user
+### /locmess/user
 
 ```sh
 #Endpoint: /signup 
@@ -54,7 +54,7 @@
 #Requires: Http header X-Token
 ``` 
 
-###/locmess/location
+### /locmess/location
 
 ```sh
 #Endpoint: /list
@@ -89,7 +89,7 @@
 #Requires: Http header X-Token
 ``` 
 
-###/locmess/actions
+### /locmess/actions
 ```sh
 #Endpoint: /heartbeat
 #Type: Rest
