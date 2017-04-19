@@ -1,7 +1,7 @@
 package ist.meic.cmu.domain;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -12,39 +12,86 @@ import java.util.List;
 public class Message {
 
     @Id
-    private String PublisherUsername;
-    private String Content;
-    private Location location;
-    private LocalDateTime date;
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Integer id;
+    private String username;
+    private String content;
+    private String location;
+    private Date beginDate;
+    private Date endDate;
     @ElementCollection
-    @CollectionTable(name="WhiteList")
+    @CollectionTable(name="contacts")
+    private List<Pair> contactInfo;
+    @ElementCollection
+    @CollectionTable(name="keypairs")
     private List<Pair> pairs;
 
+    public Message() {}
 
-    public Message(){}
-
-    public Message(String publisherUsername, String content, Location location, List<Pair> pairs) {
-        PublisherUsername = publisherUsername;
-        Content = content;
-  //      this.location = location;
-        this.date = date.now();
+    public Message(int id, String username, String location, Date beginDate, Date endDate, List<Pair> contactInfo, List<Pair> pairs) {
+        this.id = id;
+        this.username = username;
+        this.location = location;
+        this.beginDate = beginDate;
+        this.endDate = endDate;
+        this.contactInfo = contactInfo;
         this.pairs = pairs;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getContent() {
-        return Content;
+        return content;
     }
 
     public void setContent(String content) {
-        Content = content;
+        this.content = content;
     }
 
-    public String getPublisherUsername() {
-        return PublisherUsername;
+    public String getLocation() {
+        return location;
     }
 
-    public void setPublisherUsername(String publisherUsername) {
-        PublisherUsername = publisherUsername;
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public Date getBeginDate() {
+        return beginDate;
+    }
+
+    public void setBeginDate(Date beginDate) {
+        this.beginDate = beginDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public List<Pair> getContactInfo() {
+        return contactInfo;
+    }
+
+    public void setContactInfo(List<Pair> contactInfo) {
+        this.contactInfo = contactInfo;
     }
 
     public List<Pair> getPairs() {

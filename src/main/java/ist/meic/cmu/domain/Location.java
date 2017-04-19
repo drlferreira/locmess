@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by Diogo on 05/04/2017.
@@ -18,7 +19,7 @@ import javax.persistence.*;
 @JsonSubTypes(
         {@JsonSubTypes.Type(value = GPSLocation.class, name = "GPSLocation"),
         @JsonSubTypes.Type(value = APLocation.class, name = "APLocation") })
-public abstract class Location {
+public abstract class Location implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

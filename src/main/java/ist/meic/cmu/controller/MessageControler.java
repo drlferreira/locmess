@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by jp_s on 4/10/2017.
  */
 @RestController
-@RequestMapping(value = "Message")
+@RequestMapping(value = "message")
 public class MessageControler {
 
     @Autowired
@@ -21,6 +21,16 @@ public class MessageControler {
     @RequestMapping(method = RequestMethod.POST, value = "/post")
     public void postMessage(@RequestBody Message message){
         messageService.postMessage(message);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/unpost")
+    public void unpostMessage(@RequestBody Message message){
+        messageService.unpostMessage(message);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/list")
+    public void list(){
+        messageService.listMessages();
     }
 
 }

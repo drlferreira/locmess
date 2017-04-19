@@ -19,4 +19,9 @@ public class MessageService {
     }
 
 
+    public void unpostMessage(Message message) {
+    }
+
+    public void listMessages() {
+    }
 }
