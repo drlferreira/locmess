@@ -22,6 +22,12 @@ public class GPSLocation extends Location {
         this.radius = radius;
     }
 
+    public GPSLocation(double latitude, double longitude) {
+        super("");
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     public double getLatitude() {
         return latitude;
     }
