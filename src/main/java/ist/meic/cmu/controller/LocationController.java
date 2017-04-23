@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -20,20 +19,20 @@ public class LocationController extends LocmessController {
     LocationService locationService;
 
     @RequestMapping(method = RequestMethod.GET, value = "/list")
-    public List<Location> listLocations(HttpServletRequest httpServletRequest) {
-        return locationService.listLocations(httpServletRequest.getHeader(TOKEN_HEADER));
+    public List<Location> listLocations() {
+        return locationService.listLocations();
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/create")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void createLocation(HttpServletRequest httpServletRequest, @RequestBody Location location) {
-        locationService.createLocation(httpServletRequest.getHeader(TOKEN_HEADER), location);
+    public void createLocation(@RequestBody Location location) {
+        locationService.createLocation(location);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/remove")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeLocation(HttpServletRequest httpServletRequest, @RequestBody Location location) {
-        locationService.removeLocation(httpServletRequest.getHeader(TOKEN_HEADER), location);
+    public void removeLocation(@RequestBody Location location) {
+        locationService.removeLocation(location);
     }
 
 }

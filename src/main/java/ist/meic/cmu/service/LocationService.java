@@ -28,16 +28,16 @@ public class LocationService {
         locations = locationRepository.findAll();
     }
 
-    public List<Location> listLocations(String token) {
+    public List<Location> listLocations() {
         return locations;
     }
 
-    public void createLocation(String token, Location location) {
-        locations.add(location);
+    public void createLocation(Location location) {
+        locations.add(location)
         locationRepository.saveAndFlush(location);
     }
 
-    public void removeLocation(String token, Location location) {
+    public void removeLocation(Location location) {
         locations.remove(location);
         locationRepository.delete(location);
     }
