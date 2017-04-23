@@ -26,7 +26,7 @@ public class TokenFilter extends GenericFilter {
             tokenService = webApplicationContext.getBean(TokenService.class);
         }
         HttpServletRequest req = (HttpServletRequest) servletRequest;
-        String token = req.getHeader("X-Token");
+        String token = req.getHeader("x-token");
         // our map has no null values
         // the header username is not allowed since we use it on the wrapper
         if(token == null || tokenService.getUsername(token) == null || req.getHeader("Username") != null)

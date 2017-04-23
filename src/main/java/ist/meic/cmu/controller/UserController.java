@@ -6,10 +6,7 @@ import ist.meic.cmu.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -52,6 +49,7 @@ public class UserController extends LocmessController{
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/logout")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void logout(HttpServletRequest httpServletRequest) {
         userService.logout(httpServletRequest.getHeader(TOKEN_HEADER));
     }
@@ -62,11 +60,13 @@ public class UserController extends LocmessController{
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/addpair")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addPair(HttpServletRequest httpServletRequest, @RequestBody Pair pair) {
         userService.addPair(httpServletRequest.getHeader(TOKEN_HEADER), pair);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/removepair")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removePair(HttpServletRequest httpServletRequest, @RequestBody Pair pair) {
         userService.removePair(httpServletRequest.getHeader(TOKEN_HEADER), pair);
     }

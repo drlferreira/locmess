@@ -3,6 +3,7 @@ package ist.meic.cmu.controller;
 import ist.meic.cmu.domain.Location;
 import ist.meic.cmu.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,11 +25,13 @@ public class LocationController extends LocmessController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/create")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void createLocation(HttpServletRequest httpServletRequest, @RequestBody Location location) {
         locationService.createLocation(httpServletRequest.getHeader(TOKEN_HEADER), location);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/remove")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeLocation(HttpServletRequest httpServletRequest, @RequestBody Location location) {
         locationService.removeLocation(httpServletRequest.getHeader(TOKEN_HEADER), location);
     }
