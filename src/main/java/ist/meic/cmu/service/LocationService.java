@@ -33,7 +33,7 @@ public class LocationService {
     }
 
     public void createLocation(Location location) {
-        locations.add(location)
+        locations.add(location);
         locationRepository.saveAndFlush(location);
     }
 
