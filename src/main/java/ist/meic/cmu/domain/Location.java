@@ -41,4 +41,14 @@ public abstract class Location implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public boolean equals(Object o){
+        if(o != null && o instanceof Location){
+            Location toCompare = (Location) o;
+            return this.getName().equals(toCompare.getName());
+        }
+        return false;
+    }
+
 }

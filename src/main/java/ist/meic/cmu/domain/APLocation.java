@@ -14,4 +14,14 @@ public class APLocation extends Location {
     public APLocation(String name){
         super(name);
     }
+
+    @Override
+    public boolean equals(Object o){
+        if(o != null && o instanceof APLocation){
+            APLocation toCompare = (APLocation) o;
+            return super.equals(o);
+        }
+        return false;
+    }
+
 }

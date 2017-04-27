@@ -45,4 +45,15 @@ public class GPSLocation extends Location {
     public void setRadius(float radius) {
         this.radius = radius;
     }
+
+    @Override
+    public boolean equals(Object o){
+        if(o != null && o instanceof GPSLocation){
+            GPSLocation toCompare = (GPSLocation) o;
+            return super.equals(o) && this.latitude == toCompare.latitude &&
+                    this.longitude == toCompare.getLongitude() && this.radius == toCompare.getRadius();
+        }
+        return false;
+    }
+
 }
