@@ -10,14 +10,16 @@ public class GPSLocation extends Location {
 
     private double latitude;
     private double longitude;
+    private float radius;
 
     public GPSLocation(){
     }
 
-    public GPSLocation(double latitude, double longitude) {
+    public GPSLocation(double latitude, double longitude, float radius) {
         super("");
         this.latitude = latitude;
         this.longitude = longitude;
+        this.radius = radius;
     }
 
     public double getLatitude() {
@@ -36,4 +38,11 @@ public class GPSLocation extends Location {
         this.longitude = longitude;
     }
 
+    public float getRadius() {
+        return radius;
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
+    }
 }
