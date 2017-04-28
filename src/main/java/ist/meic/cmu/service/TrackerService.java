@@ -2,11 +2,14 @@ package ist.meic.cmu.service;
 
 import ist.meic.cmu.domain.Location;
 import ist.meic.cmu.domain.User;
+import ist.meic.cmu.dto.MessageDto;
 import ist.meic.cmu.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,6 +32,9 @@ public class TrackerService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    MessageService messageService;
+
     private ConcurrentHashMap<User, Location> clientsLocations;
     private ConcurrentHashMap<User, Timer> timers;
 
@@ -38,14 +44,14 @@ public class TrackerService {
         timers = new ConcurrentHashMap<>();
     }
 
-    public void track(String token, Location currentLocation) {
+    public List<MessageDto> track(String token, Location currentLocation) {
         User user = userRepository.findUserByUsername(tokenService.getUsername(token));
         clientsLocations.put(user, currentLocation);
         // stop the old timer
         timers.get(user).cancel();
-        // TODO: Return the list of messages!
         // start a new one
         timers.put(user, missedHeartBeat(user, token, HEARTBEAT_DELAY));
+        return messageService.getNotifications(user.getUsername());
     }
 
     // when a user logsout there is no need to track its location anymore
@@ -71,6 +77,18 @@ public class TrackerService {
             }
         }, delay);
         return timer;
+    }
+
+    public Location getUserLocation(String username) {
+        return clientsLocations.get(userRepository.findUserByUsername(username));
+    }
+
+    public ArrayList<User> getActiveUsers(){
+        ArrayList<User> users = new ArrayList<>();
+        for (User user : clientsLocations.keySet()){
+            users.add(user);
+        }
+        return users;
     }
 
 }

@@ -1,12 +1,13 @@
 package ist.meic.cmu.controller;
 
 import ist.meic.cmu.domain.Location;
+import ist.meic.cmu.dto.MessageDto;
 import ist.meic.cmu.service.TrackerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Created by Diogo on 08/04/2017.
@@ -18,10 +19,8 @@ public class HeartBeatController extends LocmessController {
     TrackerService trackerService;
 
     @RequestMapping(method = RequestMethod.POST, value = "/actions/heartbeat")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void heartBeat(HttpServletRequest httpServletRequest, @RequestBody Location currentLocation) {
-        // TODO: check the project specification, to see what can we send back to the user!
-        trackerService.track(httpServletRequest.getHeader(TOKEN_HEADER), currentLocation);
+    public List<MessageDto> heartBeat(HttpServletRequest httpServletRequest, @RequestBody Location currentLocation) {
+        return trackerService.track(httpServletRequest.getHeader(TOKEN_HEADER), currentLocation);
     }
 
 }

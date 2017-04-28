@@ -1,9 +1,18 @@
 package ist.meic.cmu.service;
 
-import ist.meic.cmu.domain.Message;
+import ist.meic.cmu.domain.*;
+import ist.meic.cmu.dto.MessageDto;
 import ist.meic.cmu.repository.MessageRepository;
+import ist.meic.cmu.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by jp_s on 4/10/2017.
@@ -11,17 +20,122 @@ import org.springframework.stereotype.Service;
 @Service
 public class MessageService {
 
+    private static final String WHITELIST = "W";
+    private static final String BACKLIST = "B";
+
     @Autowired
     MessageRepository messageRepository;
 
-    public void postMessage(Message message){
+    @Autowired
+    TokenService tokenService;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    TrackerService trackerService;
+
+    private ConcurrentHashMap<String, List<Message>> notifications;
+
+    @PostConstruct
+    private void init() {
+        notifications = new ConcurrentHashMap<>();
+    }
+
+    public void postMessage(String token, Message message){
+        User user = userRepository.findUserByUsername(tokenService.getUsername(token));
+        message.setOwner(user.getUsername());
+        user.getMessages().add(message);
+        userRepository.saveAndFlush(user);
         messageRepository.saveAndFlush(message);
+        propagate(message);
     }
 
-
-    public void unpostMessage(Message message) {
+    public void unpostMessage(String token, Message message) throws ServletException {
+        User user = userRepository.findUserByUsername(tokenService.getUsername(token));
+        if(message.getOwner().equals(user.getUsername())){
+            for (String username : notifications.keySet()){
+                User u = userRepository.findUserByUsername(username);
+                List<Message> toRemove = new ArrayList<>();
+                for (Message m : notifications.get(username)){
+                    if(message.equals(m))
+                        toRemove.add(m);
+                }
+                // remove from future notifications
+                notifications.get(username).removeAll(toRemove);
+                // remove from the user messages
+                u.getMessages().removeAll(toRemove);
+                userRepository.saveAndFlush(u);
+            }
+        }
+        else
+            throw new ServletException("You have no permission to unpost messages that aren't yours!");
     }
 
-    public void listMessages() {
+    public List<MessageDto> listMessages(String token) {
+        return parseMessage(userRepository.findUserByUsername(tokenService.getUsername(token)).getMessages());
+    }
+
+    private List<MessageDto> parseMessage(List<Message> messages) {
+        List<MessageDto> output = new ArrayList<>();
+        for (Message message : messages){
+            output.add(new MessageDto(message.getContent(), message.getOwner(), message.getBeginDate()));
+        }
+        return output;
+    }
+
+    private void propagate(Message message){
+        for (User user : trackerService.getActiveUsers()){
+            // ignore the messages if:
+            // they are after the end date
+            // they are mine - since they are already added
+            // the location doesn't match
+            // I don't match the policy in whitelist || I match the policy in backlist
+            if(new Date().after(message.getEndDate()) || message.getOwner().equals(user.getUsername()))
+                continue;
+
+            Location userLocation = trackerService.getUserLocation(user.getUsername());
+            // catches APLocations and spot on GPSLocations, i.e. not considering the radius
+            if(!userLocation.equals(message.getLocation()))
+                continue;
+            else {
+                // radius may save us - in case of two GPSLocations and the same name
+                if(userLocation.getName().equals(message.getLocation().getName())
+                        && userLocation instanceof GPSLocation && message.getLocation() instanceof GPSLocation){
+
+                    GPSLocation gpsLocation = (GPSLocation) message.getLocation();
+                    GPSLocation uLocation = (GPSLocation) userLocation;
+                    double latitude = gpsLocation.getLatitude();
+                    double longitude = gpsLocation.getLongitude();
+                    float radius = gpsLocation.getRadius()/2;
+                    if(!(latitude - radius <= uLocation.getLatitude() && uLocation.getLatitude() <= latitude + radius
+                            && longitude - radius <= uLocation.getLongitude() && uLocation.getLongitude() <= longitude+ radius))
+                        continue;
+                }
+            }
+            List<Pair> keys = message.getPairs();
+            if(message.getPolicy().equals(WHITELIST)){
+                if(message.getPairs().size() != 0)
+                    if(!user.getPairs().containsAll(keys))
+                        continue;
+            }
+            else if(message.getPolicy().equals(BACKLIST)){
+                if(user.getPairs().containsAll(keys))
+                    continue;
+            }
+
+            if(notifications.get(user.getUsername()) == null){
+                notifications.put(user.getUsername(), new ArrayList<>());
+            }
+
+            notifications.get(user.getUsername()).add(message);
+            // users should keep the messages that they receive
+            user.getMessages().add(message);
+            userRepository.saveAndFlush(user);
+        }
+    }
+
+    public List<MessageDto> getNotifications(String username) {
+        return parseMessage(notifications.get(username));
     }
 }

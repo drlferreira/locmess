@@ -20,6 +20,9 @@ public class User {
     @ElementCollection
     @CollectionTable(name="profile")
     private List<Pair> pairs;
+    @ElementCollection
+    @CollectionTable(name="userMessages")
+    private List<Message> messages;
 
     // needed for rest calls
     public User(){
@@ -59,4 +62,11 @@ public class User {
         return pairs;
     }
 
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
 }
