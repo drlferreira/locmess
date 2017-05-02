@@ -7,11 +7,15 @@ import java.util.Date;
  */
 public class MessageDto {
 
+    private Integer id;
+    private String title;
     private String content;
     private String publisher;
     private Date publicationDate;
 
-    public MessageDto(String content, String publisher, Date publicationDate) {
+    public MessageDto(Integer id, String title, String content, String publisher, Date publicationDate) {
+        this.id = id;
+        this.title = title;
         this.content = content;
         this.publisher = publisher;
         this.publicationDate = publicationDate;
@@ -39,5 +43,21 @@ public class MessageDto {
 
     public void setPublicationDate(Date publicationDate) {
         this.publicationDate = publicationDate;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

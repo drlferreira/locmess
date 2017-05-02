@@ -1,5 +1,7 @@
 package ist.meic.cmu.domain;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -10,9 +12,12 @@ public class Message {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
+    private String title;
     private Location location;
     private String policy;
+    @DateTimeFormat(pattern = "MMM d, yyyy HH:mm:ss aaa")
     private Date beginDate;
+    @DateTimeFormat(pattern = "MMM d, yyyy HH:mm:ss aaa")
     private Date endDate;
     private String owner;
     private String content;
@@ -20,8 +25,9 @@ public class Message {
     @CollectionTable(name="pairs")
     private List<Pair> pairs;
 
-    public Message(Integer id, Location location, String policy, List<Pair> keys, Date beginDate, Date endDate, String content) {
+    public Message(Integer id, String title, Location location, String policy, List<Pair> keys, Date beginDate, Date endDate, String content) {
         this.id = id;
+        this.title = title;
         this.location = location;
         this.policy = policy;
         this.pairs = keys;
@@ -114,4 +120,11 @@ public class Message {
     }
 
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 }

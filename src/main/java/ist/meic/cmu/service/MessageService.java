@@ -46,8 +46,8 @@ public class MessageService {
         User user = userRepository.findUserByUsername(tokenService.getUsername(token));
         message.setOwner(user.getUsername());
         user.getMessages().add(message);
-        userRepository.saveAndFlush(user);
         messageRepository.saveAndFlush(message);
+        userRepository.saveAndFlush(user);
         propagate(message);
     }
 
@@ -79,7 +79,7 @@ public class MessageService {
     private List<MessageDto> parseMessage(List<Message> messages) {
         List<MessageDto> output = new ArrayList<>();
         for (Message message : messages){
-            output.add(new MessageDto(message.getContent(), message.getOwner(), message.getBeginDate()));
+            output.add(new MessageDto(message.getId(), message.getTitle(), message.getContent(), message.getOwner(), message.getBeginDate()));
         }
         return output;
     }

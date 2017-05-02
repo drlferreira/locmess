@@ -29,7 +29,7 @@ public class LocationService {
     }
 
     public List<Location> listLocations() {
-        return locations;
+        return locationRepository.findAll();
     }
 
     public void createLocation(Location location) {
