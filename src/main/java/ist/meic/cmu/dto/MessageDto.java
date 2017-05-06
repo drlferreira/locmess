@@ -11,9 +11,9 @@ public class MessageDto {
     private String title;
     private String content;
     private String publisher;
-    private Date publicationDate;
+    private String publicationDate;
 
-    public MessageDto(Integer id, String title, String content, String publisher, Date publicationDate) {
+    public MessageDto(Integer id, String title, String content, String publisher, String publicationDate) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -37,11 +37,11 @@ public class MessageDto {
         this.publisher = publisher;
     }
 
-    public Date getPublicationDate() {
+    public String getPublicationDate() {
         return publicationDate;
     }
 
-    public void setPublicationDate(Date publicationDate) {
+    public void setPublicationDate(String publicationDate) {
         this.publicationDate = publicationDate;
     }
 

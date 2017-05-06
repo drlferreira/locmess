@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -78,8 +79,10 @@ public class MessageService {
 
     private List<MessageDto> parseMessage(List<Message> messages) {
         List<MessageDto> output = new ArrayList<>();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         for (Message message : messages){
-            output.add(new MessageDto(message.getId(), message.getTitle(), message.getContent(), message.getOwner(), message.getBeginDate()));
+            output.add(new MessageDto(message.getId(), message.getTitle(),
+                    message.getContent(), message.getOwner(), simpleDateFormat.format(message.getBeginDate())));
         }
         return output;
     }
