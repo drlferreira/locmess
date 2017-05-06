@@ -23,6 +23,9 @@ public class LocmessApplication {
 		frb.addUrlPatterns("/user/listpairs");
 		frb.addUrlPatterns("/user/addpair");
 		frb.addUrlPatterns("/user/removepair");
+		frb.addUrlPatterns("/location/*");
+		frb.addUrlPatterns("/message/*");
+		frb.addUrlPatterns("/action/*");
 		return frb;
 	}
 }

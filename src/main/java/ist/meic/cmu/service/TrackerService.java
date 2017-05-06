@@ -20,8 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class TrackerService {
 
-    // tolerated delay for the next hearbeat 30 seconds
-    private final long HEARTBEAT_DELAY = 30000;
+    // tolerated delay for the next heartbeat 30 seconds
+    private final long HEARTBEAT_DELAY = 90000;
 
     @Autowired
     TokenService tokenService;
@@ -48,7 +48,8 @@ public class TrackerService {
         User user = userRepository.findUserByUsername(tokenService.getUsername(token));
         clientsLocations.put(user, currentLocation);
         // stop the old timer
-        timers.get(user).cancel();
+        if(timers.get(user) != null)
+            timers.get(user).cancel();
         // start a new one
         timers.put(user, missedHeartBeat(user, token, HEARTBEAT_DELAY));
         return messageService.getNotifications(user.getUsername());
@@ -58,7 +59,7 @@ public class TrackerService {
     public void remove(String token) {
         User toRemove = null;
         for (User user : clientsLocations.keySet()){
-            if(user.equals(tokenService.getUsername(token))) {
+            if(user.getUsername().equals(tokenService.getUsername(token))) {
                 toRemove = user;
                 break;
             }
@@ -72,8 +73,8 @@ public class TrackerService {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                userService.logout(token);
-                clientsLocations.remove(user);
+                remove(token);
+                tokenService.removeToken(token);
             }
         }, delay);
         return timer;
