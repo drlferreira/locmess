@@ -52,22 +52,18 @@ public class MessageService {
         propagate(message);
     }
 
-    public void unpostMessage(String token, Message message) throws ServletException {
+    public void unpostMessage(String token, MessageDto message) throws ServletException {
         User user = userRepository.findUserByUsername(tokenService.getUsername(token));
-        if(message.getOwner().equals(user.getUsername())){
-            for (String username : notifications.keySet()){
-                User u = userRepository.findUserByUsername(username);
-                List<Message> toRemove = new ArrayList<>();
-                for (Message m : notifications.get(username)){
-                    if(message.equals(m))
-                        toRemove.add(m);
-                }
-                // remove from future notifications
-                notifications.get(username).removeAll(toRemove);
-                // remove from the user messages
-                u.getMessages().removeAll(toRemove);
-                userRepository.saveAndFlush(u);
+        if(message.getPublisher().equals(user.getUsername())){
+            Message toRemove = null;
+            for (Message m : user.getMessages()){
+                if(message.getId().equals(m.getId()))
+                    toRemove = m;
             }
+            // remove from the user messages
+            user.getMessages().remove(toRemove);
+            userRepository.saveAndFlush(user);
+            messageRepository.delete(message.getId());
         }
         else
             throw new ServletException("You have no permission to unpost messages that aren't yours!");

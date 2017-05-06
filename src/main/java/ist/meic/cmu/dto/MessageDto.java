@@ -1,5 +1,7 @@
 package ist.meic.cmu.dto;
 
+import ist.meic.cmu.domain.Message;
+
 import java.util.Date;
 
 /**
@@ -19,6 +21,10 @@ public class MessageDto {
         this.content = content;
         this.publisher = publisher;
         this.publicationDate = publicationDate;
+    }
+
+    public MessageDto(){
+
     }
 
     public String getContent() {

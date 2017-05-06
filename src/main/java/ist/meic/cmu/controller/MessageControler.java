@@ -29,7 +29,7 @@ public class MessageControler extends LocmessController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/unpost")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void unpostMessage(HttpServletRequest request, @RequestBody Message message) throws ServletException {
+    public void unpostMessage(HttpServletRequest request, @RequestBody MessageDto message) throws ServletException {
         messageService.unpostMessage(request.getHeader(TOKEN_HEADER),message);
     }
 
