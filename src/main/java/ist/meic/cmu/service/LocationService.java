@@ -39,6 +39,6 @@ public class LocationService {
 
     public void removeLocation(Location location) {
         locations.remove(location);
-        locationRepository.delete(location);
+        locationRepository.delete(location.getId());
     }
 }

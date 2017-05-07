@@ -21,6 +21,14 @@ import java.io.Serializable;
         @JsonSubTypes.Type(value = APLocation.class, name = "APLocation") })
 public abstract class Location implements Serializable {
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -42,13 +50,16 @@ public abstract class Location implements Serializable {
         this.name = name;
     }
 
+
     @Override
-    public boolean equals(Object o){
-        if(o != null && o instanceof Location){
-            Location toCompare = (Location) o;
-            return this.getName().equals(toCompare.getName());
-        }
-        return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Location location = (Location) o;
+
+        if (id != location.id) return false;
+        return name != null ? name.equals(location.name) : location.name == null;
     }
 
 }
