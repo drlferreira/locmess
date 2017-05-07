@@ -8,23 +8,11 @@ import javax.persistence.Entity;
 @Entity
 public class APLocation extends Location {
 
-    private List<String> WifiLocations;
-
     public APLocation(){
     }
 
-    public APLocation(String name, List<String> wifiLocations){
+    public APLocation(String name){
         super(name);
-        this.WifiLocations = wifiLocations;
-    }
-
-    public void setWifiLocations(List<String> wifiLocations) {
-        WifiLocations = wifiLocations;
-    }
-
-    public List<String> getWifiLocations() {
-
-        return WifiLocations;
     }
 
     @Override
