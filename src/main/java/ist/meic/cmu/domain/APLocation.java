@@ -1,6 +1,9 @@
 package ist.meic.cmu.domain;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import java.util.List;
 
 /**
  * Created by Diogo on 08/04/2017.
@@ -8,11 +11,16 @@ import javax.persistence.Entity;
 @Entity
 public class APLocation extends Location {
 
+    @ElementCollection
+    @CollectionTable(name="list_aps")
+    private List<String> aps;
+
     public APLocation(){
     }
 
-    public APLocation(String name){
+    public APLocation(String name, List<String> aps){
         super(name);
+        this.aps = aps;
     }
 
     @Override
@@ -24,4 +32,11 @@ public class APLocation extends Location {
         return false;
     }
 
+    public List<String> getAps() {
+        return aps;
+    }
+
+    public void setAps(List<String> aps) {
+        this.aps = aps;
+    }
 }
