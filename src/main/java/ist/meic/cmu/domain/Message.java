@@ -108,7 +108,7 @@ public class Message {
         if(o != null && o instanceof Message){
             Message toCompare = (Message) o;
             return id.equals(toCompare.getId()) &&
-                    location.equals(toCompare.getLocation()) &&
+                    location.getId() == toCompare.getLocation().getId() &&
                     policy.equals(toCompare.getPolicy()) &&
                     pairs.containsAll(toCompare.getPairs()) &&
                     beginDate.equals(toCompare.getBeginDate()) &&

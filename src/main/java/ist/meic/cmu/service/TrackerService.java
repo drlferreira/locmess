@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class TrackerService {
 
-    // tolerated delay for the next heartbeat 30 seconds
+    // tolerated delay for the next heartbeat 90 seconds
     private final long HEARTBEAT_DELAY = 90000;
 
     @Autowired

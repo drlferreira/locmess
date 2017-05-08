@@ -51,15 +51,5 @@ public abstract class Location implements Serializable {
     }
 
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Location location = (Location) o;
-
-        if (id != location.id) return false;
-        return name != null ? name.equals(location.name) : location.name == null;
-    }
 
 }

@@ -27,7 +27,7 @@ public class APLocation extends Location {
     public boolean equals(Object o){
         if(o != null && o instanceof APLocation){
             APLocation toCompare = (APLocation) o;
-            return super.equals(o);
+            return aps.containsAll(toCompare.getAps());
         }
         return false;
     }

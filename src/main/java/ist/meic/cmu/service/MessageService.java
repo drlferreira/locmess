@@ -97,30 +97,17 @@ public class MessageService {
             // catches APLocations and spot on GPSLocations, i.e. not considering the radius
             if(!userLocation.equals(message.getLocation()))
                 continue;
-            else {
-                // radius may save us - in case of two GPSLocations and the same name
-                if(userLocation.getName().equals(message.getLocation().getName())
-                        && userLocation instanceof GPSLocation && message.getLocation() instanceof GPSLocation){
 
-                    GPSLocation gpsLocation = (GPSLocation) message.getLocation();
-                    GPSLocation uLocation = (GPSLocation) userLocation;
-                    double latitude = gpsLocation.getLatitude();
-                    double longitude = gpsLocation.getLongitude();
-                    float radius = gpsLocation.getRadius()/2;
-                    if(!(latitude - radius <= uLocation.getLatitude() && uLocation.getLatitude() <= latitude + radius
-                            && longitude - radius <= uLocation.getLongitude() && uLocation.getLongitude() <= longitude+ radius))
+            List<Pair> keys = message.getPairs();
+
+            if(message.getPairs().size() != 0) {
+                if (message.getPolicy().equals(WHITELIST)) {
+                    if (!user.getPairs().containsAll(keys))
+                        continue;
+                } else if (message.getPolicy().equals(BACKLIST)) {
+                    if (user.getPairs().containsAll(keys))
                         continue;
                 }
-            }
-            List<Pair> keys = message.getPairs();
-            if(message.getPolicy().equals(WHITELIST)){
-                if(message.getPairs().size() != 0)
-                    if(!user.getPairs().containsAll(keys))
-                        continue;
-            }
-            else if(message.getPolicy().equals(BACKLIST)){
-                if(user.getPairs().containsAll(keys))
-                    continue;
             }
 
             if(notifications.get(user.getUsername()) == null){
@@ -128,13 +115,19 @@ public class MessageService {
             }
 
             notifications.get(user.getUsername()).add(message);
-            // users should keep the messages that they receive
-            user.getMessages().add(message);
-            userRepository.saveAndFlush(user);
         }
     }
 
     public List<MessageDto> getNotifications(String username) {
         return parseMessage(notifications.get(username));
+    }
+
+    public void removeNotification(String username, Integer id) {
+        Message toRemove = null;
+        for (Message m : notifications.get(username)){
+            if(m.getId().equals(id))
+                toRemove = m;
+        }
+        if(toRemove != null) notifications.get(username).remove(toRemove);
     }
 }
