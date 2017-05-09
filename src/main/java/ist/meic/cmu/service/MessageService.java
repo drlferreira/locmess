@@ -112,6 +112,7 @@ public class MessageService {
     }
 
     public List<MessageDto> getNotifications(String username) {
+        System.out.println(notifications.size());
         return parseMessage(notifications.get(username));
     }
 
