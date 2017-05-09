@@ -86,4 +86,14 @@ public class User {
     public int hashCode() {
         return username != null ? username.hashCode() : 0;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", pairs=" + pairs +
+                ", messages=" + messages +
+                '}';
+    }
 }
