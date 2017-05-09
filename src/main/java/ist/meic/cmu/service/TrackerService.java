@@ -46,7 +46,8 @@ public class TrackerService {
 
     public List<MessageDto> track(String token, Location currentLocation) {
         User user = userRepository.findUserByUsername(tokenService.getUsername(token));
-        System.out.println(user);
+        //System.out.println(user);
+        System.out.println(currentLocation);
         clientsLocations.put(user, currentLocation);
         // stop the old timer
         if(timers.get(user) != null) {
