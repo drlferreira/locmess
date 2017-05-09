@@ -40,7 +40,10 @@ public class UserService {
     public String login(User user) {
         User toLogin = userRepository.findUser(user.getUsername(), user.getPassword());
         if(toLogin != null){
-            messageService.getNotifications().put(toLogin.getUsername(),new ArrayList<>());
+            System.out.println("FESSSSTTTAAAAAA");
+            System.out.println(toLogin);
+            final List<Message> put = messageService.getNotifications().put(toLogin.getUsername(), new ArrayList<>());
+            System.out.println(put);
             return tokenService.generateToken(user.getUsername());
         }
         return null;
