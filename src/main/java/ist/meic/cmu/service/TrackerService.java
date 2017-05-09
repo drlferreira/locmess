@@ -92,9 +92,8 @@ public class TrackerService {
 
     public ArrayList<User> getActiveUsers(){
         ArrayList<User> users = new ArrayList<>();
-        for (User user : clientsLocations.keySet()){
-            users.add(user);
-        }
+        System.out.println(clientsLocations.keySet());
+        users.addAll(clientsLocations.keySet());
         return users;
     }
 

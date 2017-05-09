@@ -87,6 +87,7 @@ public class MessageService {
     private void propagate(Message message){
         System.out.println(message);
         System.out.println(trackerService.getActiveUsers().size());
+        System.out.println("VAMOS PROPAGAR!!!!");
         for (User user : trackerService.getActiveUsers()){
             System.out.println("fdifdhufdhfududfhdfudfhuhdfudfh");
             // ignore the messages if:

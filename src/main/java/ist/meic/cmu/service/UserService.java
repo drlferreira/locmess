@@ -43,7 +43,6 @@ public class UserService {
             System.out.println("FESSSSTTTAAAAAA");
             System.out.println(toLogin);
             final List<Message> put = messageService.getNotifications().put(toLogin.getUsername(), new ArrayList<>());
-            System.out.println(put);
             return tokenService.generateToken(user.getUsername());
         }
         return null;
