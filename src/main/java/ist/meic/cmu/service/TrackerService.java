@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Created by Diogo on 08/04/2017.
@@ -35,13 +35,13 @@ public class TrackerService {
     @Autowired
     MessageService messageService;
 
-    private ConcurrentHashMap<User, Location> clientsLocations;
-    private ConcurrentHashMap<User, Timer> timers;
+    private ConcurrentSkipListMap<User, Location> clientsLocations;
+    private ConcurrentSkipListMap<User, Timer> timers;
 
     @PostConstruct
     public void init(){
-        clientsLocations = new ConcurrentHashMap<>();
-        timers = new ConcurrentHashMap<>();
+        clientsLocations = new ConcurrentSkipListMap<>();
+        timers = new ConcurrentSkipListMap<>();
     }
 
     public List<MessageDto> track(String token, Location currentLocation) {

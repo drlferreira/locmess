@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Created by jp_s on 4/10/2017.
@@ -36,11 +36,11 @@ public class MessageService {
     @Autowired
     TrackerService trackerService;
 
-    private ConcurrentHashMap<String, List<Message>> notifications;
+    private ConcurrentSkipListMap<String, List<Message>> notifications;
 
     @PostConstruct
     private void init() {
-        notifications = new ConcurrentHashMap<>();
+        notifications = new ConcurrentSkipListMap<>();
     }
 
     public void postMessage(String token, Message message){
@@ -130,7 +130,7 @@ public class MessageService {
         if(toRemove != null) notifications.get(username).remove(toRemove);
     }
 
-    public ConcurrentHashMap<String, List<Message>> getNotifications(){
+    public ConcurrentSkipListMap<String, List<Message>> getNotifications(){
         return notifications;
     }
 }

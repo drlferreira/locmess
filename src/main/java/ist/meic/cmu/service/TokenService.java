@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Created by Diogo on 05/04/2017.
@@ -17,11 +17,11 @@ public class TokenService {
 
     // key - token
     // value - username
-    private ConcurrentHashMap<String,String> tokens;
+    private ConcurrentSkipListMap<String,String> tokens;
 
     @PostConstruct
     public void init(){
-        tokens = new ConcurrentHashMap<>();
+        tokens = new ConcurrentSkipListMap<>();
     }
 
     public String generateToken(String username){
