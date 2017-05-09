@@ -127,4 +127,19 @@ public class Message {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", location=" + location +
+                ", policy='" + policy + '\'' +
+                ", beginDate=" + beginDate +
+                ", endDate=" + endDate +
+                ", owner='" + owner + '\'' +
+                ", content='" + content + '\'' +
+                ", pairs=" + pairs +
+                '}';
+    }
 }

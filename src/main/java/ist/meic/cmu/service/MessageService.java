@@ -49,6 +49,7 @@ public class MessageService {
         user.getMessages().add(message);
         messageRepository.saveAndFlush(message);
         userRepository.saveAndFlush(user);
+        System.out.println("Propagate");
         propagate(message);
     }
 
