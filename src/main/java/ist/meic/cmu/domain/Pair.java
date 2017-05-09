@@ -42,4 +42,9 @@ public class Pair implements Serializable {
         }
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        return key.hashCode();
+    }
 }

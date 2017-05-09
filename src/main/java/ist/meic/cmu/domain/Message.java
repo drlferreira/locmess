@@ -142,4 +142,10 @@ public class Message {
                 ", pairs=" + pairs +
                 '}';
     }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
 }

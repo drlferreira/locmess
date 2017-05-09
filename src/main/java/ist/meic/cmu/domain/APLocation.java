@@ -46,4 +46,9 @@ public class APLocation extends Location {
                 "aps=" + aps +
                 '}';
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

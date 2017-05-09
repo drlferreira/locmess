@@ -1,6 +1,9 @@
 package ist.meic.cmu.service;
 
-import ist.meic.cmu.domain.*;
+import ist.meic.cmu.domain.Location;
+import ist.meic.cmu.domain.Message;
+import ist.meic.cmu.domain.Pair;
+import ist.meic.cmu.domain.User;
 import ist.meic.cmu.dto.MessageDto;
 import ist.meic.cmu.repository.MessageRepository;
 import ist.meic.cmu.repository.UserRepository;
@@ -13,7 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by jp_s on 4/10/2017.
@@ -36,11 +39,11 @@ public class MessageService {
     @Autowired
     TrackerService trackerService;
 
-    private ConcurrentSkipListMap<String, List<Message>> notifications;
+    private ConcurrentHashMap<String, List<Message>> notifications;
 
     @PostConstruct
     private void init() {
-        notifications = new ConcurrentSkipListMap<>();
+        notifications = new ConcurrentHashMap<>();
     }
 
     public void postMessage(String token, Message message){
@@ -130,7 +133,7 @@ public class MessageService {
         if(toRemove != null) notifications.get(username).remove(toRemove);
     }
 
-    public ConcurrentSkipListMap<String, List<Message>> getNotifications(){
+    public ConcurrentHashMap<String, List<Message>> getNotifications(){
         return notifications;
     }
 }

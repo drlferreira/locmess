@@ -1,9 +1,5 @@
 package ist.meic.cmu.dto;
 
-import ist.meic.cmu.domain.Message;
-
-import java.util.Date;
-
 /**
  * Created by Diogo on 28/04/2017.
  */

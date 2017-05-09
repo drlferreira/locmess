@@ -1,7 +1,5 @@
 package ist.meic.cmu.controller;
 
-import ist.meic.cmu.domain.Location;
-import ist.meic.cmu.domain.Message;
 import ist.meic.cmu.domain.Pair;
 import ist.meic.cmu.dto.MessageDto;
 import ist.meic.cmu.service.MiscService;

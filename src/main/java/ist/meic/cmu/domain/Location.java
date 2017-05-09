@@ -2,7 +2,6 @@ package ist.meic.cmu.domain;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -50,6 +49,9 @@ public abstract class Location implements Serializable {
         this.name = name;
     }
 
-
+    @Override
+    public int hashCode() {
+        return id;
+    }
 
 }

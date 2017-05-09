@@ -65,4 +65,9 @@ public class GPSLocation extends Location {
                 ", radius=" + radius +
                 '}';
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }
