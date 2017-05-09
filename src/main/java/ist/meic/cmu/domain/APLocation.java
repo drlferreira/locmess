@@ -39,4 +39,11 @@ public class APLocation extends Location {
     public void setAps(List<String> aps) {
         this.aps = aps;
     }
+
+    @Override
+    public String toString() {
+        return "APLocation{" +
+                "aps=" + aps +
+                '}';
+    }
 }

@@ -84,7 +84,10 @@ public class MessageService {
     }
 
     private void propagate(Message message){
+        System.out.println(message);
+        System.out.println(trackerService.getActiveUsers().size());
         for (User user : trackerService.getActiveUsers()){
+            System.out.println("fdifdhufdhfududfhdfudfhuhdfudfh");
             // ignore the messages if:
             // they are after the end date
             // they are mine - since they are already added
