@@ -92,12 +92,10 @@ public class MessageService {
             // I don't match the policy in whitelist || I match the policy in backlist
             if(new Date().after(message.getEndDate()) || message.getOwner().equals(user.getUsername()))
                 continue;
-
             Location userLocation = trackerService.getUserLocation(user.getUsername());
             // catches APLocations and spot on GPSLocations, i.e. not considering the radius
             if(!userLocation.equals(message.getLocation()))
                 continue;
-
             List<Pair> keys = message.getPairs();
 
             if(message.getPairs().size() != 0) {
@@ -109,11 +107,6 @@ public class MessageService {
                         continue;
                 }
             }
-
-            if(notifications.get(user.getUsername()) == null){
-                notifications.put(user.getUsername(), new ArrayList<>());
-            }
-
             notifications.get(user.getUsername()).add(message);
         }
     }
@@ -129,5 +122,9 @@ public class MessageService {
                 toRemove = m;
         }
         if(toRemove != null) notifications.get(username).remove(toRemove);
+    }
+
+    public ConcurrentHashMap<String, List<Message>> getNotifications(){
+        return notifications;
     }
 }
