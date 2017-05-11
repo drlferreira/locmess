@@ -51,12 +51,14 @@ public class MessageService {
         notifications = notificationRepository.findAll();
         queue = new ConcurrentHashMap<>();
         // invalidate old notifications
-        /*new Timer().schedule(new TimerTask() {
+        new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 getValidNotifications(notifications);
+                for (Notification notification : notifications)
+                    propagate(notification.getMessage());
             }
-        },DELAY,PERIOD);*/
+        },DELAY,PERIOD);
     }
 
     public void postMessage(String token, Message message){
@@ -108,20 +110,16 @@ public class MessageService {
     }
 
     private void getValidNotifications(List<Notification> notifications){
-        List<Notification> toRemove = new ArrayList<>();
         for (Notification notification : notifications){
             // the notification has expired!
-            if(new Date().after(notification.getMessage().getEndDate()))
+            if(new Date().after(notification.getMessage().getEndDate())) {
                 scheduleRemoval(notification.getId(), notification.getMessage().getOwner());
-            toRemove.add(notification);
+            }
         }
-        notifications.removeAll(toRemove);
     }
 
     private void propagate(Message message){
         for (String username : trackerService.getActiveUsers()){
-            System.out.println("pty");
-            System.out.println(message.getLocation());
             // ignore the messages if:
             // they are after the end date
             // they are mine - since they are already added
@@ -145,15 +143,13 @@ public class MessageService {
                         continue;
                 }
             }
-
             queue.get(username).add(new Notification(message.getId(), message));
         }
     }
 
     public List<MessageDto> getNotifications(String username) {
-        getValidNotifications(queue.get(username));
         ArrayList<Message> messages = new ArrayList<>();
-        for (Notification notification : notifications)
+        for (Notification notification : queue.get(username))
             messages.add(notification.getMessage());
         return parseMessage(messages);
     }
@@ -169,18 +165,16 @@ public class MessageService {
 
     public void initializeNotifications(User user){
         List<Message> messages = user.getMessages();
-        if(notifications.size() == 0 && messages.size() == 0){
-            System.out.println("pttt");
+        if(!queue.keySet().contains(user.getUsername())){
             queue.put(user.getUsername(), new ArrayList<>());
         }
-        else if(messages.size() == 0){
-            System.out.println("espan");
+
+        if(messages.size() == 0){
             for (Notification notification : notifications){
                 propagate(notification.getMessage());
             }
         }
         else {
-            System.out.println("tjtj");
             for (Message message : messages) {
                 // avoid notifications that are hold
                 if (!new Date().after(message.getEndDate())) {

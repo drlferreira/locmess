@@ -42,7 +42,6 @@ public class TrackerService {
     }
 
     public List<MessageDto> track(String token, Location currentLocation) {
-        System.out.println(currentLocation);
         String username = tokenService.getUsername(token);
         clientsLocations.put(username, currentLocation);
         stopTimer(username);
