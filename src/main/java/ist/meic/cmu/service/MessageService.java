@@ -1,21 +1,19 @@
 package ist.meic.cmu.service;
 
-import ist.meic.cmu.domain.Location;
-import ist.meic.cmu.domain.Message;
-import ist.meic.cmu.domain.Pair;
-import ist.meic.cmu.domain.User;
+import ist.meic.cmu.domain.*;
 import ist.meic.cmu.dto.MessageDto;
 import ist.meic.cmu.repository.MessageRepository;
+import ist.meic.cmu.repository.NotificationRepository;
 import ist.meic.cmu.repository.UserRepository;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -23,6 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service
 public class MessageService {
+
+    private final long DELAY = 0;
+    private final long PERIOD = 15000;
 
     private static final String WHITELIST = "W";
     private static final String BACKLIST = "B";
@@ -37,13 +38,25 @@ public class MessageService {
     UserRepository userRepository;
 
     @Autowired
+    NotificationRepository notificationRepository;
+
+    @Autowired
     TrackerService trackerService;
 
-    private ConcurrentHashMap<String, List<Message>> notifications;
+    private List<Notification> notifications;
+    private ConcurrentHashMap<String,List<Notification>> queue;
 
     @PostConstruct
     private void init() {
-        notifications = new ConcurrentHashMap<>();
+        notifications = notificationRepository.findAll();
+        queue = new ConcurrentHashMap<>();
+        // invalidate old notifications
+        /*new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                getValidNotifications(notifications);
+            }
+        },DELAY,PERIOD);*/
     }
 
     public void postMessage(String token, Message message){
@@ -52,22 +65,19 @@ public class MessageService {
         user.getMessages().add(message);
         messageRepository.saveAndFlush(message);
         userRepository.saveAndFlush(user);
-        System.out.println("Propagate");
+        Notification notification = new Notification(message.getId(), message);
+        notificationRepository.saveAndFlush(notification);
+        notifications.add(notification);
         propagate(message);
     }
 
     public void unpostMessage(String token, MessageDto message) throws ServletException {
         User user = userRepository.findUserByUsername(tokenService.getUsername(token));
         if(message.getPublisher().equals(user.getUsername())){
-            Message toRemove = null;
             for (Message m : user.getMessages()){
                 if(message.getId().equals(m.getId()))
-                    toRemove = m;
+                    scheduleRemoval(message.getId(),user.getUsername());
             }
-            // remove from the user messages
-            user.getMessages().remove(toRemove);
-            userRepository.saveAndFlush(user);
-            messageRepository.delete(message.getId());
         }
         else
             throw new ServletException("You have no permission to unpost messages that aren't yours!");
@@ -87,25 +97,45 @@ public class MessageService {
         return output;
     }
 
+    private void scheduleRemoval(int id, String username){
+        User user = userRepository.findUserByUsername(username);
+        user.getMessages().remove(messageRepository.findOne(id));
+        userRepository.saveAndFlush(user);
+        messageRepository.delete(id);
+        notificationRepository.delete(id);
+        // since the equals is based on id, its irrelevant the message
+        notifications.remove(new Notification(id,null));
+    }
+
+    private void getValidNotifications(List<Notification> notifications){
+        List<Notification> toRemove = new ArrayList<>();
+        for (Notification notification : notifications){
+            // the notification has expired!
+            if(new Date().after(notification.getMessage().getEndDate()))
+                scheduleRemoval(notification.getId(), notification.getMessage().getOwner());
+            toRemove.add(notification);
+        }
+        notifications.removeAll(toRemove);
+    }
+
     private void propagate(Message message){
-        System.out.println(message);
-        System.out.println(trackerService.getActiveUsers().size());
-        System.out.println("VAMOS PROPAGAR!!!!");
-        for (User user : trackerService.getActiveUsers()){
-            System.out.println("fdifdhufdhfududfhdfudfhuhdfudfh");
+        for (String username : trackerService.getActiveUsers()){
+            System.out.println("pty");
+            System.out.println(message.getLocation());
             // ignore the messages if:
             // they are after the end date
             // they are mine - since they are already added
             // the location doesn't match
             // I don't match the policy in whitelist || I match the policy in backlist
-            if(new Date().after(message.getEndDate()) || message.getOwner().equals(user.getUsername()))
+            if(new Date().after(message.getEndDate()) || message.getOwner().equals(username))
                 continue;
-            Location userLocation = trackerService.getUserLocation(user.getUsername());
+            Location userLocation = trackerService.getUserLocation(username);
             // catches APLocations and spot on GPSLocations, i.e. not considering the radius
-            if(!userLocation.equals(message.getLocation()))
+            if(!message.getLocation().equals(userLocation))
                 continue;
-            List<Pair> keys = message.getPairs();
 
+            List<Pair> keys = message.getPairs();
+            User user = userRepository.findUserByUsername(username);
             if(message.getPairs().size() != 0) {
                 if (message.getPolicy().equals(WHITELIST)) {
                     if (!user.getPairs().containsAll(keys))
@@ -115,25 +145,53 @@ public class MessageService {
                         continue;
                 }
             }
-            notifications.get(user.getUsername()).add(message);
+
+            queue.get(username).add(new Notification(message.getId(), message));
         }
     }
 
     public List<MessageDto> getNotifications(String username) {
-        System.out.println(notifications.size());
-        return parseMessage(notifications.get(username));
+        getValidNotifications(queue.get(username));
+        ArrayList<Message> messages = new ArrayList<>();
+        for (Notification notification : notifications)
+            messages.add(notification.getMessage());
+        return parseMessage(messages);
     }
 
     public void removeNotification(String username, Integer id) {
-        Message toRemove = null;
-        for (Message m : notifications.get(username)){
-            if(m.getId().equals(id))
-                toRemove = m;
+        Notification toRemove = null;
+        for (Notification notification : queue.get(username)){
+            if(notification.getId() == id)
+                toRemove = notification;
         }
-        if(toRemove != null) notifications.get(username).remove(toRemove);
+        if(toRemove != null) queue.get(username).remove(toRemove);
     }
 
-    public ConcurrentHashMap<String, List<Message>> getNotifications(){
-        return notifications;
+    public void initializeNotifications(User user){
+        List<Message> messages = user.getMessages();
+        if(notifications.size() == 0 && messages.size() == 0){
+            System.out.println("pttt");
+            queue.put(user.getUsername(), new ArrayList<>());
+        }
+        else if(messages.size() == 0){
+            System.out.println("espan");
+            for (Notification notification : notifications){
+                propagate(notification.getMessage());
+            }
+        }
+        else {
+            System.out.println("tjtj");
+            for (Message message : messages) {
+                // avoid notifications that are hold
+                if (!new Date().after(message.getEndDate())) {
+                    for (Notification notification : notifications) {
+                        // all the messages that the user doesn't know about
+                        if (!message.getId().equals(notification.getMessage().getId()))
+                            propagate(message);
+                    }
+                }
+            }
+        }
     }
+
 }

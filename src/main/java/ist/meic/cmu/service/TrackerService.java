@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -35,8 +32,8 @@ public class TrackerService {
     @Autowired
     MessageService messageService;
 
-    private ConcurrentHashMap<User, Location> clientsLocations;
-    private ConcurrentHashMap<User, Timer> timers;
+    private ConcurrentHashMap<String, Location> clientsLocations;
+    private ConcurrentHashMap<String, Timer> timers;
 
     @PostConstruct
     public void init(){
@@ -45,36 +42,33 @@ public class TrackerService {
     }
 
     public List<MessageDto> track(String token, Location currentLocation) {
-        User user = userRepository.findUserByUsername(tokenService.getUsername(token));
-        //System.out.println(user);
         System.out.println(currentLocation);
-        clientsLocations.put(user, currentLocation);
-        // stop the old timer
-        if(timers.get(user) != null) {
-            timers.get(user).cancel();
-            timers.get(user).purge();
+        String username = tokenService.getUsername(token);
+        clientsLocations.put(username, currentLocation);
+        stopTimer(username);
+        timers.put(username, missedHeartBeat(token, HEARTBEAT_DELAY));
+        return messageService.getNotifications(username);
+    }
+
+    private void stopTimer(String username) {
+        Timer timer = timers.get(username);
+        if(timer != null) {
+            timer.cancel();
+            timer.purge();
+            timers.remove(username);
         }
-        // start a new one
-        timers.put(user, missedHeartBeat(user, token, HEARTBEAT_DELAY));
-        return messageService.getNotifications(user.getUsername());
     }
 
     // when a user logsout there is no need to track its location anymore
     public void remove(String token) {
-        User toRemove = null;
-        for (User user : clientsLocations.keySet()){
-            if(user.getUsername().equals(tokenService.getUsername(token))) {
-                toRemove = user;
-                break;
-            }
-        }
-        if(toRemove != null) {
-            clientsLocations.remove(toRemove);
-            timers.remove(toRemove);
+        String user = tokenService.getUsername(token);
+        if(clientsLocations.keySet().contains(user)){
+            clientsLocations.remove(user);
+            stopTimer(user);
         }
     }
 
-    private Timer missedHeartBeat(User user, String token, long delay){
+    private Timer missedHeartBeat(String token, long delay){
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -87,14 +81,15 @@ public class TrackerService {
     }
 
     public Location getUserLocation(String username) {
-        return clientsLocations.get(userRepository.findUserByUsername(username));
+        return clientsLocations.get(username);
     }
 
-    public ArrayList<User> getActiveUsers(){
-        ArrayList<User> users = new ArrayList<>();
-        System.out.println(clientsLocations.keySet());
-        users.addAll(clientsLocations.keySet());
-        return users;
+    public ArrayList<String> getActiveUsers(){
+        return new ArrayList<>(clientsLocations.keySet());
+    }
+
+    public ConcurrentHashMap<String, Location> getClientsLocations() {
+        return clientsLocations;
     }
 
 }

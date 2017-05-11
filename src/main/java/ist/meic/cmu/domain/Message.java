@@ -3,11 +3,12 @@ package ist.meic.cmu.domain;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-public class Message {
+public class Message implements Serializable {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)

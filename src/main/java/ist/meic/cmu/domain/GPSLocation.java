@@ -50,8 +50,11 @@ public class GPSLocation extends Location {
     public boolean equals(Object o){
         if(o != null && o instanceof GPSLocation){
             GPSLocation toCompare = (GPSLocation) o;
-            double d = Math.sqrt(Math.pow(this.latitude - toCompare.getLatitude(),2) +
-                        Math.pow(this.longitude - toCompare.getLongitude(),2));
+            double x = Math.abs(this.latitude) - Math.abs(toCompare.getLatitude());
+            double y = Math.abs(this.longitude) - Math.abs(toCompare.getLongitude());
+            double d = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
+            System.out.println(d);
+            System.out.println(radius);
             return d <= (radius/2);
         }
         return false;

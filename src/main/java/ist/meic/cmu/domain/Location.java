@@ -49,9 +49,5 @@ public abstract class Location implements Serializable {
         this.name = name;
     }
 
-    @Override
-    public int hashCode() {
-        return id;
-    }
 
 }
