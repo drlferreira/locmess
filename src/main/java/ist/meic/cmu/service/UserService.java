@@ -57,6 +57,8 @@ public class UserService {
 
     public void addPair(String token, Pair pair) {
         User user = userRepository.findUserByUsername(tokenService.getUsername(token));
+        if(user.getPairs().contains(pair))
+            return;
         user.getPairs().add(pair);
         userRepository.saveAndFlush(user);
     }
