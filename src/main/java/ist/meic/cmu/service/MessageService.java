@@ -44,6 +44,11 @@ public class MessageService {
         List<Message> messages = messageRepository.findAll();
         for (Message message : messages) {
             Packet toAdd = new Packet(message.getLocation(), new ArrayList<>());
+            if (queue.contains(toAdd)) {
+                toAdd = findPacket(message);
+                toAdd.getNotifications().add(message);
+                continue;
+            }
             toAdd.getNotifications().add(message);
             queue.add(toAdd);
         }
@@ -66,8 +71,9 @@ public class MessageService {
         Packet packet = new Packet(message.getLocation(), new ArrayList<>());
         if (queue.contains(packet)) {
             packet = findPacket(message);
+            packet.getNotifications().add(message);
+            return;
         }
-
         packet.getNotifications().add(message);
         queue.add(packet);
     }
@@ -166,7 +172,7 @@ public class MessageService {
 
     private Packet findPacket(Message message) {
         for (Packet packet : queue) {
-            if (packet.getNotifications().contains(message))
+            if (packet.getLocation().equals(message.getLocation()))
                 return packet;
         }
         return null;
