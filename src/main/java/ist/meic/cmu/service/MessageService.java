@@ -93,7 +93,11 @@ public class MessageService {
     }
 
     public List<MessageDto> listMessages(String token) {
-        return parseMessage(userRepository.findUserByUsername(tokenService.getUsername(token)).getMessages());
+        String username = tokenService.getUsername(token);
+        User user = userRepository.findUserByUsername(username);
+        List<MessageDto> messageDtos = parseMessage(user.getMessages());
+        messageDtos.addAll(findInterests(username, trackerService.getUserLocation(username)));
+        return messageDtos;
     }
 
     private List<MessageDto> parseMessage(List<Message> messages) {
