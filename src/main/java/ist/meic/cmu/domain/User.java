@@ -1,9 +1,6 @@
 package ist.meic.cmu.domain;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,23 +15,40 @@ public class User implements Serializable {
     @Id
     private String username;
     private String password;
-    @ElementCollection
-    @CollectionTable(name="profile")
-    private List<Pair> pairs;
-    @ElementCollection
-    @CollectionTable(name="userMessages")
-    private List<Message> messages;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "USER_PAIR", joinColumns = {@JoinColumn(name = "username")},
+            inverseJoinColumns = {@JoinColumn(name = "PAIR_KEY")})
+    private List<Pair> pairs = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(name = "USER_MSG", joinColumns = {@JoinColumn(name = "username")},
+            inverseJoinColumns = {@JoinColumn(name = "MSG_ID")})
+    private List<Message> messages = new ArrayList<>();
 
     // needed for rest calls
     public User(){
     }
-
 
     public User(String username, String password) {
         this.username = username;
         this.password = password;
         pairs = new ArrayList<>();
         messages = new ArrayList<>();
+    }
+
+    public List<Pair> getPairs() {
+        return pairs;
+    }
+
+    public void setPairs(List<Pair> pairs) {
+        this.pairs = pairs;
+    }
+
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
     }
 
     public String getUsername() {
@@ -59,18 +73,6 @@ public class User implements Serializable {
                 return pair.getValue();
         }
         return null;
-    }
-
-    public List<Pair> getPairs(){
-        return pairs;
-    }
-
-    public List<Message> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
     }
 
     @Override

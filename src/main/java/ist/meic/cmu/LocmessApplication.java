@@ -26,6 +26,8 @@ public class LocmessApplication {
 		frb.addUrlPatterns("/location/*");
 		frb.addUrlPatterns("/message/*");
 		frb.addUrlPatterns("/action/*");
-		return frb;
+        frb.addUrlPatterns("/misc/*");
+        frb.addUrlPatterns("/actions/heartbeat");
+        return frb;
 	}
 }

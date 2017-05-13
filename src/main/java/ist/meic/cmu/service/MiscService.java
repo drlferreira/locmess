@@ -2,7 +2,6 @@ package ist.meic.cmu.service;
 
 import ist.meic.cmu.domain.Pair;
 import ist.meic.cmu.domain.User;
-import ist.meic.cmu.dto.MessageDto;
 import ist.meic.cmu.repository.MessageRepository;
 import ist.meic.cmu.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +42,10 @@ public class MiscService {
         return new ArrayList<>(pairs);
     }
 
+    /*
     public void confirmMsg(String token, MessageDto messageDto) {
         User user = userRepository.findUserByUsername(tokenService.getUsername(token));
-        List<MessageDto> notifications = messageService.getNotifications(user.getUsername());
+        List<MessageDto> notifications = messageService.findInterests(user.getUsername());
         for (MessageDto md : notifications){
             if(md.getId().equals(messageDto.getId())){
                 user.getMessages().add(messageRepository.findOne(md.getId()));
@@ -53,5 +53,5 @@ public class MiscService {
                 messageService.removeNotification(user.getUsername(),md.getId());
             }
         }
-    }
+    }*/
 }

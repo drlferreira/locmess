@@ -46,6 +46,7 @@ public class GPSLocation extends Location {
         this.radius = radius;
     }
 
+
     @Override
     public boolean equals(Object o){
         if(o != null && o instanceof GPSLocation){
@@ -53,6 +54,7 @@ public class GPSLocation extends Location {
             double x = Math.abs(this.latitude) - Math.abs(toCompare.getLatitude());
             double y = Math.abs(this.longitude) - Math.abs(toCompare.getLongitude());
             double d = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
+            System.out.println(d <= (radius) / 2);
             return d <= (radius/2);
         }
         return false;
@@ -67,8 +69,5 @@ public class GPSLocation extends Location {
                 '}';
     }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
+
 }

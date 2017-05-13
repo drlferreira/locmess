@@ -3,18 +3,14 @@ package ist.meic.cmu.service;
 import ist.meic.cmu.domain.*;
 import ist.meic.cmu.dto.MessageDto;
 import ist.meic.cmu.repository.MessageRepository;
-import ist.meic.cmu.repository.NotificationRepository;
 import ist.meic.cmu.repository.UserRepository;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by jp_s on 4/10/2017.
@@ -22,12 +18,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class MessageService {
 
-    private final long DELAY = 0;
-    private final long PERIOD = 15000;
-
     private static final String WHITELIST = "W";
     private static final String BACKLIST = "B";
-
+    private final long DELAY = 0;
+    private final long PERIOD = 30000;
     @Autowired
     MessageRepository messageRepository;
 
@@ -37,28 +31,31 @@ public class MessageService {
     @Autowired
     UserRepository userRepository;
 
-    @Autowired
-    NotificationRepository notificationRepository;
 
     @Autowired
     TrackerService trackerService;
 
-    private List<Notification> notifications;
-    private ConcurrentHashMap<String,List<Notification>> queue;
+    private List<Packet> queue;
 
     @PostConstruct
     private void init() {
-        notifications = notificationRepository.findAll();
-        queue = new ConcurrentHashMap<>();
-        // invalidate old notifications
+        queue = new ArrayList<>();
+        removeOldMessages();
+        List<Message> messages = messageRepository.findAll();
+        for (Message message : messages) {
+            Packet toAdd = new Packet(message.getLocation(), null);
+            if (!queue.contains(toAdd)) {
+                toAdd.setNotifications(new ArrayList<>());
+            }
+            toAdd.getNotifications().add(message);
+            queue.add(toAdd);
+        }
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                getValidNotifications(notifications);
-                for (Notification notification : notifications)
-                    propagate(notification.getMessage());
+                removeOldMessages();
             }
-        },DELAY,PERIOD);
+        }, DELAY, PERIOD);
     }
 
     public void postMessage(String token, Message message){
@@ -67,18 +64,26 @@ public class MessageService {
         user.getMessages().add(message);
         messageRepository.saveAndFlush(message);
         userRepository.saveAndFlush(user);
-        Notification notification = new Notification(message.getId(), message);
-        notificationRepository.saveAndFlush(notification);
-        notifications.add(notification);
-        propagate(message);
+
+        // if the location is not know yet add it to the array
+        Packet packet = new Packet(message.getLocation(), null);
+        if (!queue.contains(packet))
+            packet.setNotifications(new ArrayList<>());
+        else
+            packet = findPacket(message);
+
+        packet.getNotifications().add(message);
+        queue.add(packet);
     }
 
     public void unpostMessage(String token, MessageDto message) throws ServletException {
         User user = userRepository.findUserByUsername(tokenService.getUsername(token));
         if(message.getPublisher().equals(user.getUsername())){
             for (Message m : user.getMessages()){
-                if(message.getId().equals(m.getId()))
-                    scheduleRemoval(message.getId(),user.getUsername());
+                if (message.getId().equals(m.getId())) {
+                    // find packet will never return null, since the repositories are sync
+                    scheduleRemoval(user.getUsername(), message.getId(), findPacket(m));
+                }
             }
         }
         else
@@ -99,26 +104,8 @@ public class MessageService {
         return output;
     }
 
-    private void scheduleRemoval(int id, String username){
-        User user = userRepository.findUserByUsername(username);
-        user.getMessages().remove(messageRepository.findOne(id));
-        userRepository.saveAndFlush(user);
-        messageRepository.delete(id);
-        notificationRepository.delete(id);
-        // since the equals is based on id, its irrelevant the message
-        notifications.remove(new Notification(id,null));
-    }
-
-    private void getValidNotifications(List<Notification> notifications){
-        for (Notification notification : notifications){
-            // the notification has expired!
-            if(new Date().after(notification.getMessage().getEndDate())) {
-                scheduleRemoval(notification.getId(), notification.getMessage().getOwner());
-            }
-        }
-    }
-
-    private void propagate(Message message){
+    private Message propagate(Message message) {
+        Message output = null;
         for (String username : trackerService.getActiveUsers()){
             // ignore the messages if:
             // they are after the end date
@@ -143,49 +130,51 @@ public class MessageService {
                         continue;
                 }
             }
-            queue.get(username).add(new Notification(message.getId(), message));
+            output = message;
         }
+        return output;
     }
 
-    public List<MessageDto> getNotifications(String username) {
-        ArrayList<Message> messages = new ArrayList<>();
-        for (Notification notification : queue.get(username))
-            messages.add(notification.getMessage());
-        return parseMessage(messages);
-    }
-
-    public void removeNotification(String username, Integer id) {
-        Notification toRemove = null;
-        for (Notification notification : queue.get(username)){
-            if(notification.getId() == id)
-                toRemove = notification;
-        }
-        if(toRemove != null) queue.get(username).remove(toRemove);
-    }
-
-    public void initializeNotifications(User user){
-        List<Message> messages = user.getMessages();
-        if(!queue.keySet().contains(user.getUsername())){
-            queue.put(user.getUsername(), new ArrayList<>());
-        }
-
-        if(messages.size() == 0){
-            for (Notification notification : notifications){
-                propagate(notification.getMessage());
-            }
-        }
-        else {
-            for (Message message : messages) {
-                // avoid notifications that are hold
-                if (!new Date().after(message.getEndDate())) {
-                    for (Notification notification : notifications) {
-                        // all the messages that the user doesn't know about
-                        if (!message.getId().equals(notification.getMessage().getId()))
-                            propagate(message);
+    public void findInterests(String username, Location location) {
+        System.out.println(location);
+        User user = userRepository.findUserByUsername(username);
+        for (Packet packet : queue) {
+            if (packet.getLocation().equals(location)) {
+                for (Message notification : packet.getNotifications()) {
+                    if (propagate(notification) != null && !user.getMessages().contains(notification)) {
+                        user.getMessages().add(notification);
+                        userRepository.saveAndFlush(user);
                     }
                 }
             }
         }
     }
+
+    private void removeOldMessages() {
+        List<Message> messages = messageRepository.findAll();
+        for (Message message : messages) {
+            if (new Date().after(message.getEndDate()))
+                scheduleRemoval(message.getOwner(), message.getId(), null);
+        }
+    }
+
+    private void scheduleRemoval(String username, int messageId, Packet packet) {
+        User user = userRepository.findUserByUsername(username);
+        Message message = messageRepository.findOne(messageId);
+        user.getMessages().remove(message);
+        userRepository.saveAndFlush(user);
+        messageRepository.delete(messageId);
+        if (packet != null)
+            packet.getNotifications().remove(message);
+    }
+
+    private Packet findPacket(Message message) {
+        for (Packet packet : queue) {
+            if (packet.getNotifications().contains(message))
+                return packet;
+        }
+        return null;
+    }
+
 
 }

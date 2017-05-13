@@ -1,12 +1,19 @@
 package ist.meic.cmu.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.io.Serializable;
 
 /**
  * Created by Diogo on 05/04/2017.
  */
+
+@Entity
 public class Pair implements Serializable {
 
+    @Id
+    @Column(name = "PAIR_KEY")
     private String key;
     private String value;
 
@@ -47,4 +54,5 @@ public class Pair implements Serializable {
     public int hashCode() {
         return key.hashCode();
     }
+
 }

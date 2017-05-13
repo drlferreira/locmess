@@ -1,13 +1,11 @@
 package ist.meic.cmu.service;
 
-import ist.meic.cmu.domain.Message;
 import ist.meic.cmu.domain.Pair;
 import ist.meic.cmu.domain.User;
 import ist.meic.cmu.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,7 +38,6 @@ public class UserService {
     public String login(User user) {
         User toLogin = userRepository.findUser(user.getUsername(), user.getPassword());
         if(toLogin != null){
-            messageService.initializeNotifications(toLogin);
             return tokenService.generateToken(user.getUsername());
         }
         return null;

@@ -4,6 +4,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,7 @@ public class Message implements Serializable {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(name = "MSG_ID")
     private Integer id;
     private String title;
     private Location location;
@@ -22,9 +24,10 @@ public class Message implements Serializable {
     private Date endDate;
     private String owner;
     private String content;
-    @ElementCollection
-    @CollectionTable(name="pairs")
-    private List<Pair> pairs;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "MSG_PAIR", joinColumns = {@JoinColumn(name = "MSG_ID")},
+            inverseJoinColumns = {@JoinColumn(name = "PAIR_KEY")})
+    private List<Pair> pairs = new ArrayList<>();
 
     public Message(Integer id, String title, Location location, String policy, List<Pair> keys, Date beginDate, Date endDate, String content) {
         this.id = id;
@@ -38,6 +41,14 @@ public class Message implements Serializable {
     }
 
     public Message(){
+    }
+
+    public List<Pair> getPairs() {
+        return pairs;
+    }
+
+    public void setPairs(List<Pair> pairs) {
+        this.pairs = pairs;
     }
 
     public Integer getId() {
@@ -62,14 +73,6 @@ public class Message implements Serializable {
 
     public void setPolicy(String policy) {
         this.policy = policy;
-    }
-
-    public List<Pair> getPairs() {
-        return pairs;
-    }
-
-    public void setPairs(List<Pair> pairs) {
-        this.pairs = pairs;
     }
 
     public Date getBeginDate() {
