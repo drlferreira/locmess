@@ -137,19 +137,19 @@ public class MessageService {
         return output;
     }
 
-    public void findInterests(String username, Location location) {
-        System.out.println(location);
+    public List<MessageDto> findInterests(String username, Location location) {
+        List<Message> output = new ArrayList<>();
         User user = userRepository.findUserByUsername(username);
         for (Packet packet : queue) {
             if (packet.getLocation().equals(location)) {
                 for (Message notification : packet.getNotifications()) {
                     if (propagate(notification) != null && !user.getMessages().contains(notification)) {
-                        user.getMessages().add(notification);
-                        userRepository.saveAndFlush(user);
+                        output.add(notification);
                     }
                 }
             }
         }
+        return parseMessage(output);
     }
 
     private void removeOldMessages() {

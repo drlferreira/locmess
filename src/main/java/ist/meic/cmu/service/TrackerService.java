@@ -1,12 +1,14 @@
 package ist.meic.cmu.service;
 
 import ist.meic.cmu.domain.Location;
+import ist.meic.cmu.dto.MessageDto;
 import ist.meic.cmu.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,12 +44,12 @@ public class TrackerService {
         timers = new ConcurrentHashMap<>();
     }
 
-    public void track(String token, Location currentLocation) {
+    public List<MessageDto> track(String token, Location currentLocation) {
         String username = tokenService.getUsername(token);
         clientsLocations.put(username, currentLocation);
         stopTimer(username);
         timers.put(username, missedHeartBeat(token, HEARTBEAT_DELAY));
-        messageService.findInterests(username, currentLocation);
+        return messageService.findInterests(username, currentLocation);
     }
 
     private void stopTimer(String username) {
