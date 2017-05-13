@@ -43,10 +43,7 @@ public class MessageService {
         removeOldMessages();
         List<Message> messages = messageRepository.findAll();
         for (Message message : messages) {
-            Packet toAdd = new Packet(message.getLocation(), null);
-            if (!queue.contains(toAdd)) {
-                toAdd.setNotifications(new ArrayList<>());
-            }
+            Packet toAdd = new Packet(message.getLocation(), new ArrayList<>());
             toAdd.getNotifications().add(message);
             queue.add(toAdd);
         }
@@ -66,11 +63,10 @@ public class MessageService {
         userRepository.saveAndFlush(user);
 
         // if the location is not know yet add it to the array
-        Packet packet = new Packet(message.getLocation(), null);
-        if (!queue.contains(packet))
-            packet.setNotifications(new ArrayList<>());
-        else
+        Packet packet = new Packet(message.getLocation(), new ArrayList<>());
+        if (queue.contains(packet)) {
             packet = findPacket(message);
+        }
 
         packet.getNotifications().add(message);
         queue.add(packet);
