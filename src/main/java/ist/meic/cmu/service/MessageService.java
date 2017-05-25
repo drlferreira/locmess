@@ -164,6 +164,7 @@ public class MessageService {
         }
     }
 
+
     private void scheduleRemoval(String username, int messageId, Packet packet) {
         User user = userRepository.findUserByUsername(username);
         Message message = messageRepository.findOne(messageId);
