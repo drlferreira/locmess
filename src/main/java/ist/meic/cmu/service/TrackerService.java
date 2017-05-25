@@ -45,8 +45,8 @@ public class TrackerService {
     public void track(String token, Location currentLocation) {
         String username = tokenService.getUsername(token);
         clientsLocations.put(username, currentLocation);
-        stopTimer(username);
-        timers.put(username, missedHeartBeat(token, HEARTBEAT_DELAY));
+        //stopTimer(username);
+        //timers.put(username, missedHeartBeat(token, HEARTBEAT_DELAY));
     }
 
     private void stopTimer(String username) {
@@ -63,7 +63,7 @@ public class TrackerService {
         String user = tokenService.getUsername(token);
         if(clientsLocations.keySet().contains(user)){
             clientsLocations.remove(user);
-            stopTimer(user);
+            //stopTimer(user);
         }
     }
 

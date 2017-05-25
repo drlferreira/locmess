@@ -170,8 +170,9 @@ public class MessageService {
         user.getMessages().remove(message);
         userRepository.saveAndFlush(user);
         messageRepository.delete(messageId);
-        if (packet != null)
+        if (packet != null) {
             packet.getNotifications().remove(message);
+        }
     }
 
     private Packet findPacket(Message message) {
